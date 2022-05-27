@@ -1,0 +1,11 @@
+version: '3'
+services:
+  srt:
+    build: .
+    ports: 
+      - "1935:1935/udp"
+      - "8181:8181"
+    volumes:
+      - ./sls.conf:/etc/sls/sls.conf
+    environment:
+      - PASSPHRASE=1234567812345678
