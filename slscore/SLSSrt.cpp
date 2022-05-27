@@ -188,6 +188,10 @@ int CSLSSrt::libsrt_setup(int port)
     }
 */
 
+    if(getenv("PASSPHRASE") != NULL) {
+        srt_setsockopt(fd, SRTO_PASSPHRASE, SRTO_PASSPHRASE, getenv("PASSPHRASE"), 16);
+    }
+
     int enable = 0;
     int lossmaxttlvalue = 40;
 
