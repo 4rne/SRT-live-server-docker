@@ -3,12 +3,15 @@ FROM alpine:latest as build
 RUN apk update &&\
     apk upgrade &&\ 
     apk add --no-cache linux-headers alpine-sdk cmake tcl openssl-dev zlib-dev
+
 WORKDIR /tmp
-COPY . /tmp/srt-live-server/
 RUN git clone https://github.com/Haivision/srt.git
+
 WORKDIR /tmp/srt
 RUN git checkout master && ./configure && make -j8 && make install
+
 WORKDIR /tmp/srt-live-server
+COPY srt-live-server/ .
 RUN make -j8
 
 # final stage
@@ -25,7 +28,7 @@ COPY --from=build /usr/local/lib/libsrt* /usr/local/lib/
 COPY --from=build /tmp/srt-live-server/bin/* /usr/local/bin/
 COPY sls.conf /etc/sls/
 VOLUME /logs
-EXPOSE 8181 30000/udp
+EXPOSE 8181 1935/udp
 USER srt
 WORKDIR /home/srt
 ENTRYPOINT [ "sls", "-c", "/etc/sls/sls.conf"]
